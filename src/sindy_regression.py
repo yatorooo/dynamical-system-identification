@@ -1,0 +1,1 @@
+"""SINDy regression module."""
