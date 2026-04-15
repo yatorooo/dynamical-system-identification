@@ -16,22 +16,8 @@ def fit_sindy(
     max_iterations: int = 10,
 ) -> pd.DataFrame:
     """Fit sparse coefficients with sequential thresholded least squares."""
-    if threshold < 0:
-        raise ValueError("threshold must be non-negative.")
-    if max_iterations < 1:
-        raise ValueError("max_iterations must be at least 1.")
-    if not target_columns:
-        raise ValueError("target_columns must contain at least one column name.")
-
-    missing_targets = [column for column in target_columns if column not in derivatives.columns]
-    if missing_targets:
-        raise ValueError(f"Missing derivative columns: {missing_targets}")
-
     theta = library.to_numpy(dtype=float)
     dxdt = derivatives[list(target_columns)].to_numpy(dtype=float)
-
-    if len(theta) != len(dxdt):
-        raise ValueError("library and derivatives must have the same number of rows.")
 
     coefficients = np.linalg.lstsq(theta, dxdt, rcond=None)[0]
 
@@ -69,10 +55,6 @@ def predict_derivatives(
     coefficients: pd.DataFrame,
 ) -> pd.DataFrame:
     """Use fitted SINDy coefficients to predict derivatives from a library."""
-    missing_features = [column for column in coefficients.index if column not in library.columns]
-    if missing_features:
-        raise ValueError(f"Library is missing coefficient features: {missing_features}")
-
     theta = library[coefficients.index].to_numpy(dtype=float)
     coefficient_matrix = coefficients.to_numpy(dtype=float)
     predictions = theta @ coefficient_matrix

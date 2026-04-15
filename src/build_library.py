@@ -19,15 +19,6 @@ def build_polynomial_library(
     include_constant: bool = True,
 ) -> tuple[pd.DataFrame, list[str]]:
     """Build a polynomial candidate library from selected state columns."""
-    if max_degree < 1:
-        raise ValueError("max_degree must be at least 1.")
-    if not state_columns:
-        raise ValueError("state_columns must contain at least one column name.")
-
-    missing_columns = [column for column in state_columns if column not in data.columns]
-    if missing_columns:
-        raise ValueError(f"Missing state columns: {missing_columns}")
-
     library_columns: dict[str, np.ndarray] = {}
     num_rows = len(data)
 
@@ -60,9 +51,6 @@ def add_custom_terms(
     augmented_library = library.copy()
 
     for column, transforms in custom_terms.items():
-        if column not in data.columns:
-            raise ValueError(f"Missing state column for custom terms: {column}")
-
         values = data[column].to_numpy(dtype=float)
         for term_name, transform in transforms.items():
             feature_name = f"{term_name}({column})"

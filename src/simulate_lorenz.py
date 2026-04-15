@@ -33,11 +33,6 @@ def simulate_lorenz(
     beta: float = 8.0 / 3.0,
 ) -> pd.DataFrame:
     """Simulate the Lorenz system and return the trajectory as a DataFrame."""
-    if dt <= 0:
-        raise ValueError("dt must be positive.")
-    if t_max <= 0:
-        raise ValueError("t_max must be positive.")
-
     num_steps = int(np.floor(t_max / dt)) + 1
     time = np.linspace(0.0, dt * (num_steps - 1), num_steps)
     solution = solve_ivp(
@@ -49,9 +44,6 @@ def simulate_lorenz(
         t_eval=time,
         method="RK45",
     )
-
-    if not solution.success:
-        raise RuntimeError(f"Lorenz simulation failed: {solution.message}")
 
     return pd.DataFrame(
         {

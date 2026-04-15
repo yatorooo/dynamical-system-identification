@@ -32,13 +32,6 @@ def simulate_damped_pendulum(
     length: float = 1.0,
 ) -> pd.DataFrame:
     """Simulate a damped pendulum and return the trajectory as a DataFrame."""
-    if dt <= 0:
-        raise ValueError("dt must be positive.")
-    if t_max <= 0:
-        raise ValueError("t_max must be positive.")
-    if length <= 0:
-        raise ValueError("length must be positive.")
-
     num_steps = int(np.floor(t_max / dt)) + 1
     time = np.linspace(0.0, dt * (num_steps - 1), num_steps)
     solution = solve_ivp(
@@ -54,11 +47,6 @@ def simulate_damped_pendulum(
         t_eval=time,
         method="RK45",
     )
-
-    if not solution.success:
-        raise RuntimeError(
-            f"Damped pendulum simulation failed: {solution.message}"
-        )
 
     return pd.DataFrame(
         {
